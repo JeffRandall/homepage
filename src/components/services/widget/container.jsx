@@ -17,7 +17,7 @@ export default function Container({ error = false, children, service }) {
 
   const childrenArray = Array.isArray(children) ? children : [children];
 
-  let visibleChildren = [];
+  let visibleChildren = childrenArray;
   let fields = service?.widget?.fields;
   if (typeof fields === "string") fields = JSON.parse(service.widget.fields);
   const type = service?.widget?.type;
@@ -29,6 +29,7 @@ export default function Container({ error = false, children, service }) {
     // fields: [ "resources.cpu", "widget_type.field" ]
 
     // Return the children in the order the fields were provided
+    visibleChildren = [];
     fields.forEach((field) => {
       let fullField = field;
       if (!field.includes(".")) {

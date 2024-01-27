@@ -17,7 +17,7 @@ export default function Container({ error = false, children, service }) {
 
   const childrenArray = Array.isArray(children) ? children : [children];
 
-  let visibleChildren = childrenArray;
+  let visibleChildren = [];
   let fields = service?.widget?.fields;
   if (typeof fields === "string") fields = JSON.parse(service.widget.fields);
   const type = service?.widget?.type;
@@ -27,15 +27,15 @@ export default function Container({ error = false, children, service }) {
     // fields: [ "resources.cpu", "resources.mem", "field"]
     // or even
     // fields: [ "resources.cpu", "widget_type.field" ]
-    visibleChildren = childrenArray?.filter((child) =>
-      fields.some((field) => {
-        let fullField = field;
-        if (!field.includes(".")) {
-          fullField = `${type}.${field}`;
-        }
-        return fullField === child?.props?.label;
-      }),
-    );
+
+    // Return the children in the order the fields were provided
+    fields.forEach((field) => {
+      let fullField = field;
+      if (!field.includes(".")) {
+        fullField = `${type}.${field}`;
+      }
+      visibleChildren.push(childrenArray.find((child) => fullField === child?.props?.label));
+    });
   }
 
   return <div className="relative flex flex-row w-full service-container">{visibleChildren}</div>;
